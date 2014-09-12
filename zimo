@@ -1,0 +1,100 @@
+#!/bin/sh
+cmd='\e[0;32m'
+info='\e[0;36m'
+info2='\e[0;34m'
+NC='\e[0m \n' # No Color
+CMD=$2
+FLDS=${*:2}
+MY_PWD=$(pwd)
+copy_hooks_file(){
+  if [ ! -f $1/.git/hooks/prepare-commit-msg ]; then
+    printf "${info2}Set hooks${NC}"
+    cp $2 $1/.git/hooks/prepare-commit-msg
+    chmod +x $1/.git/hooks/prepare-commit-msg
+  else
+    if diff $2 $1/.git/hooks/prepare-commit-msg >/dev/null ; then
+      printf "${info2}hooks OK${NC}"
+    else
+      cp $2 $1/.git/hooks/prepare-commit-msg
+      chmod +x $1/.git/hooks/prepare-commit-msg
+      printf "${info2}hooks updated${NC}"
+    fi
+  fi
+}
+#
+create_issue(){
+  printf "${info}#Prepare main depo [$2]${NC}"
+  copy_hooks_file $2 prepare-commit-message-main.sh
+  cd $2 && \
+    git branch "#$1" && \
+    git checkout "#$1" && \
+    cd ..
+  if [ "$?" -ne "0" ]; then
+    cd $MY_PWD
+  fi
+  for var in ${*:3}
+  do
+    printf "${info}#Prepare depo [$var]${NC}"
+    copy_hooks_file $var prepare-commit-message.sh
+    cd $var && \
+    git branch "$2/#$1" && \
+    git checkout "$2/#$1" && \
+    cd ..
+
+    if [ "$?" -ne "0" ]; then
+      cd $MY_PWD
+    fi
+  done
+}
+add_depo_to_issue(){
+  for var in ${*:3}
+  do
+    printf "${info}#Prepare depo [$var]${NC}"
+    copy_hooks_file $var prepare-commit-message.sh
+    cd $var && \
+    git branch "$2/#$1" && \
+    git checkout "$2/#$1" && \
+    cd ..
+
+    if [ "$?" -ne "0" ]; then
+      cd $MY_PWD
+    fi
+  done
+}
+
+switch_issue(){
+  printf "${info}#Switch the main depo [$2]${NC}"
+
+  cd $2 && \
+    git checkout "#$1" && \
+    cd ..
+  if [ "$?" -ne "0" ]; then
+    cd $MY_PWD
+  fi
+  for var in ${*:3}
+  do
+    printf "${info}#Switch depo [$var]${NC}"
+    cd $var && \
+    git checkout "$2/#$1" && \
+    cd ..
+    if [ "$?" -ne "0" ]; then
+      cd $MY_PWD
+    fi
+  done
+}
+
+# issue_number depo_principal depos...
+case $1 in
+  "start") printf "${cmd}Start new issue $2${NC}"
+  create_issue $2 $3 ${*:4}
+  ;;
+  "add") printf "${cmd}Add depos to issue $2${NC}"
+  add_depo_to_issue $2 $3 ${*:4}
+  ;;
+  "switch") printf "${cmd}Switching to #$2 issue ${NC}"
+  switch_issue $2 $3 ${*:4}
+  ;;
+  *) echo "no command set"
+  ;;
+esac
+
