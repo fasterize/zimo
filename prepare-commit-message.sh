@@ -8,7 +8,7 @@ COMMIT_EDITMSG=$1
 addBranchName() {
   NAME=$(git branch | grep '*' | sed 's/* //')
   DESCRIPTION=$(git config branch."$NAME".description)
-  echo "[Fasterize/$NAME] $(cat $COMMIT_EDITMSG)" > $COMMIT_EDITMSG
+  echo "[fasterize/$NAME] $(cat $COMMIT_EDITMSG)" > $COMMIT_EDITMSG
 
 }
 

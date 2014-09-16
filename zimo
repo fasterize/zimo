@@ -82,7 +82,41 @@ switch_issue(){
     fi
   done
 }
+rok(){
+  printf "${info}#Start git-rok [$2]${NC}"
+  for var in ${*:2}
+  do
+    printf "${info}#git-rok  [$var]${NC}"
+    cd $var && \
+    git-rok && \
+    cd ..
+    if [ "$?" -ne "0" ]; then
+      cd $MY_PWD
+    fi
+  done
+ 
+}
+push(){
+  printf "${info}#Push the main depo [$2]${NC}"
 
+  cd $2 && \
+    git push -u origin "#$1" && \
+    cd ..
+  if [ "$?" -ne "0" ]; then
+    cd $MY_PWD
+  fi
+  for var in ${*:3}
+  do
+    printf "${info}#Switch depo [$var]${NC}"
+    cd $var && \
+    git push -u origin "$2/#$1" && \
+    cd ..
+    if [ "$?" -ne "0" ]; then
+      cd $MY_PWD
+    fi
+  done
+
+}
 # issue_number depo_principal depos...
 case $1 in
   "start") printf "${cmd}Start new issue $2${NC}"
@@ -94,6 +128,13 @@ case $1 in
   "switch") printf "${cmd}Switching to #$2 issue ${NC}"
   switch_issue $2 $3 ${*:4}
   ;;
+  "rok") printf "${cmd}Switching to #$2 issue ${NC}"
+  rok $2 $3 ${*:4}
+  ;;
+  "push") printf "${cmd}Switching to #$2 issue ${NC}"
+  push $2 $3 ${*:4}
+  ;;
+
   *) echo "no command set"
   ;;
 esac
