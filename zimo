@@ -26,6 +26,8 @@ create_issue(){
   printf "${info}#Prepare main depo [$2]${NC}"
   copy_hooks_file $2 prepare-commit-message-main.sh
   cd $2 && \
+    git checkout master && \
+    git pull --rebase && \
     git branch "#$1" && \
     git checkout "#$1" && \
     cd ..
@@ -37,6 +39,8 @@ create_issue(){
     printf "${info}#Prepare depo [$var]${NC}"
     copy_hooks_file $var prepare-commit-message.sh
     cd $var && \
+    git checkout master && \
+    git pull --rebase && \
     git branch "$2/#$1" && \
     git checkout "$2/#$1" && \
     cd ..
@@ -52,6 +56,8 @@ add_depo_to_issue(){
     printf "${info}#Prepare depo [$var]${NC}"
     copy_hooks_file $var prepare-commit-message.sh
     cd $var && \
+    git checkout master && \
+    git pull --rebase && \
     git branch "$2/#$1" && \
     git checkout "$2/#$1" && \
     cd ..
