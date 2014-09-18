@@ -8,6 +8,9 @@ COMMIT_EDITMSG=$1
 addBranchName() {
   NAME=$(git branch | grep '*' | sed 's/* //')
   DESCRIPTION=$(git config branch."$NAME".description)
+  # prepare message if git ammend
+  COMMIT_OLD=$(cat $COMMIT_EDITMSG)
+  echo "$COMMIT_OLD" | sed -e 's/\[.*\]\: //g' > $COMMIT_EDITMSG
   echo "[$NAME]: $(cat $COMMIT_EDITMSG)" > $COMMIT_EDITMSG
   if [ -n "$DESCRIPTION" ]
   then
