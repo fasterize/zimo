@@ -41,8 +41,8 @@ create_issue(){
     cd $var && \
     git checkout master && \
     git pull --rebase && \
-    git branch "$2/#$1" && \
-    git checkout "$2/#$1" && \
+    git branch "$2#$1" && \
+    git checkout "$2#$1" && \
     cd ..
 
     if [ "$?" -ne "0" ]; then
@@ -58,8 +58,8 @@ add_depo_to_issue(){
     cd $var && \
     git checkout master && \
     git pull --rebase && \
-    git branch "$2/#$1" && \
-    git checkout "$2/#$1" && \
+    git branch "$2#$1" && \
+    git checkout "$2#$1" && \
     cd ..
 
     if [ "$?" -ne "0" ]; then
@@ -81,7 +81,7 @@ switch_issue(){
   do
     printf "${info}#Switch depo [$var]${NC}"
     cd $var && \
-    git checkout "$2/#$1" && \
+    git checkout "$2#$1" && \
     cd ..
     if [ "$?" -ne "0" ]; then
       cd $MY_PWD
@@ -115,7 +115,7 @@ push(){
   do
     printf "${info}#Switch depo [$var]${NC}"
     cd $var && \
-    git push -u origin "$2/#$1" && \
+    git push -u origin "$2#$1" && \
     cd ..
     if [ "$?" -ne "0" ]; then
       cd $MY_PWD
